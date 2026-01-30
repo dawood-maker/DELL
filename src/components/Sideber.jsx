@@ -1,60 +1,10 @@
-// import companyImg from "../assets/company.png";
-// import { NavLink } from "react-router-dom";
-
-// function Sideber() {
-//   return (
-//     <aside className="h-screen w-64 bg-gradient-to-b from-indigo-700 to-purple-800 text-white shadow-2xl">
-//       <div className="flex flex-col h-full px-6 py-8">
-//         {/* Logo */}
-//         <div className="mb-8">
-//           <img
-//             src={companyImg}
-//             alt="Logo"
-//             className="w-32 h-32 mx-auto rounded-full border-4 border-white/30 shadow-lg hover:scale-105 transition-transform duration-300"
-//           />
-//         </div>
-
-//         {/* Menu */}
-//         <ul className="flex flex-col gap-3 flex-1">
-//           {[
-//             { to: "/", label: "Home", icon: "🏠" },
-//             { to: "/link", label: "Link", icon: "🔗" },
-//             { to: "/disabled", label: "Disabled", icon: "🚫" },
-//           ].map((item) => (
-//             <li key={item.to}>
-//               <NavLink
-//                 to={item.to}
-//                 className={({ isActive }) =>
-//                   `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 transform 
-//                   ${
-//                     isActive
-//                       ? "bg-white/30 font-semibold scale-105 shadow-lg"
-//                       : "hover:bg-white/20 hover:scale-105 hover:shadow-md"
-//                   }`
-//                 }
-//               >
-//                 <span className="text-lg">{item.icon}</span>
-//                 <span className="text-base">{item.label}</span>
-//               </NavLink>
-//             </li>
-//           ))}
-//         </ul>
-
-//         {/* Footer */}
-//         <footer className="mt-auto text-center text-white/70 text-sm py-4">
-//           © 2025 Dell Technologies. All rights reserved.
-//         </footer>
-//       </div>
-//     </aside>
-//   );
-// }
-
-// export default Sideber;
-
-import companyImg from "../assets/company.png";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import companyImg from "../assets/company.png";
 
 function Sidebar() {
+  const [open, setOpen] = useState(false);
+
   const menuItems = [
     { to: "/", label: "Home", icon: "🏠" },
     { to: "/link", label: "Link", icon: "🔗" },
@@ -62,53 +12,90 @@ function Sidebar() {
   ];
 
   return (
-    <>
-      {/* Sidebar */}
+    <div className="flex">
+      {/* ================= MOBILE HEADER ================= */}
+      <header className="fixed top-0 left-0 right-0 h-16 bg-indigo-700 flex items-center px-4 z-40 md:hidden">
+        <button
+          onClick={() => setOpen(true)}
+          className="text-white text-3xl"
+        >
+          ☰
+        </button>
+        <h1 className="ml-4 text-white font-semibold text-lg">
+          Dashboard
+        </h1>
+      </header>
+
+      {/* ================= OVERLAY ================= */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* ================= SIDEBAR ================= */}
       <aside
-        className="fixed top-0 left-0 h-screen w-64 bg-gradient-to-b from-indigo-700 to-purple-800 text-white shadow-2xl z-50 flex flex-col px-6 py-8"
+        className={`fixed top-0 left-0 h-screen w-64
+        bg-gradient-to-b from-indigo-700 to-purple-800
+        text-white shadow-2xl z-50
+        transform transition-transform duration-300
+        ${open ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0`}
       >
+        {/* Close button (mobile) */}
+        <button
+          className="absolute top-4 right-4 text-2xl md:hidden"
+          onClick={() => setOpen(false)}
+        >
+          ✖
+        </button>
+
         {/* Logo */}
-        <div className="mb-8">
+        <div className="mt-16 md:mt-8 mb-8 flex justify-center">
           <img
             src={companyImg}
             alt="Logo"
-            className="w-32 h-32 mx-auto rounded-full border-4 border-white/30 shadow-lg hover:scale-105 transition-transform duration-300"
+            className="w-28 h-28 rounded-full border-4 border-white/30 shadow-lg"
           />
         </div>
 
         {/* Menu */}
-        <ul className="flex flex-col gap-3 flex-1">
+        <ul className="flex flex-col gap-3 px-4 flex-1">
           {menuItems.map((item) => (
             <li key={item.to}>
               <NavLink
                 to={item.to}
+                onClick={() => setOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 transform
+                  `flex items-center gap-3 px-4 py-3 rounded-xl transition
                   ${
                     isActive
-                      ? "bg-white/30 font-semibold scale-105 shadow-lg"
-                      : "hover:bg-white/20 hover:scale-105 hover:shadow-md"
+                      ? "bg-white/30 font-semibold"
+                      : "hover:bg-white/20"
                   }`
                 }
               >
-                <span className="text-lg">{item.icon}</span>
-                <span className="text-base">{item.label}</span>
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
               </NavLink>
             </li>
           ))}
         </ul>
 
         {/* Footer */}
-        <footer className="mt-auto text-center text-white/70 text-sm py-4">
-          © 2025 Dell Technologies. All rights reserved.
+        <footer className="text-center text-white/70 text-sm py-4">
+          © 2025 Dell Technologies
         </footer>
       </aside>
 
-      {/* Content wrapper to avoid being hidden under sidebar */}
-      <div className="ml-64">
-        {/* Your main content goes here */}
-      </div>
-    </>
+      {/* ================= PAGE CONTENT ================= */}
+      <main className="flex-1 min-h-screen bg-gray-100
+        pt-16 md:pt-4
+        md:ml-64 p-4">
+        {/* Yahan apna dashboard / routes render karo */}
+      </main>
+    </div>
   );
 }
 
